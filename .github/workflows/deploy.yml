@@ -1,4 +1,35 @@
-name: Deploy to VPS
+# name: Deploy to VPS
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+
+#       - name: Install SSH key
+#         uses: shimataro/ssh-key-action@v2
+#         with:
+#           key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+#       - name: Deploy to VPS
+#         run: |
+#           ssh -p 22 -o StrictHostKeyChecking=no toidangtest@103.176.24.231 << 'EOF'
+#             mkdir -p ~/myapp
+#             cd ~/myapp
+#             git pull origin main || git clone https://github.com/CuongFpoly03/deployVPS.git .
+#             docker-compose down
+#             docker-compose up -d --build
+#           EOF
+
+
+name: CI/CD Deploy to VPS
 
 on:
   push:
@@ -8,22 +39,29 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      # Clone repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      # Thiết lập SSH Key để kết nối tới VPS
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      # - name: Test SSH Connection
+      #   run: ssh -o StrictHostKeyChecking=no root@103.176.24.231 "echo SSH Connected"
+
+
+      # Triển khai code lên VPS
       - name: Deploy to VPS
         run: |
-          ssh -p 22 -o StrictHostKeyChecking=no toidangtest@103.176.24.231 << 'EOF'
-            mkdir -p ~/myapp
+          ssh -o StrictHostKeyChecking=no toidangtest@103.176.24.231 "
+          mkdir -p ~/myapp
             cd ~/myapp
             git pull origin main || git clone https://github.com/CuongFpoly03/deployVPS.git .
             docker-compose down
             docker-compose up -d --build
-          EOF
+          "
