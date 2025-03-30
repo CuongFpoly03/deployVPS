@@ -58,7 +58,7 @@ jobs:
       # Triển khai code lên VPS
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no toidangtest@103.176.24.231 "
+          ssh -o StrictHostKeyChecking=no root@103.176.24.231 "
           mkdir -p ~/myapp
             cd ~/myapp
             git pull origin main || git clone https://github.com/CuongFpoly03/deployVPS.git .
