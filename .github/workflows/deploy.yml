@@ -15,14 +15,14 @@ jobs:
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.TEST2025 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            mkdir -p ~/deploy
-            cd ~/deploy
+          ssh -p <port> -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            mkdir -p ~/myapp
+            cd ~/myapp
             git pull origin main || git clone ${{ github.repository }} .
             docker-compose down
             docker-compose up -d --build
